@@ -27,18 +27,18 @@ public class ControllerClass {
     }
 
     @PostMapping("/customers/createAccount")
-    public void createAccount(@RequestParam String name, @RequestParam String branch, @RequestParam Double balance){
-        serviceClass.createAccount(name,branch,balance);
+    public boolean createAccount(@RequestParam String name, @RequestParam String branch, @RequestParam Double balance){
+        return serviceClass.createAccount(name,branch,balance);
     }
 
     @PutMapping("/customers/{accountNumber}")
-    public void updateAccountByAccountNumber(@PathVariable String accountNumber, @RequestBody Customer customer){
-        serviceClass.updateAccountByAccountNumber(accountNumber,customer);
+    public boolean updateAccountByAccountNumber(@PathVariable String accountNumber, @RequestBody Customer customer){
+        return serviceClass.updateAccountByAccountNumber(accountNumber,customer);
     }
 
     @DeleteMapping("/customers/{accountNumber}")
-    public void deleteAccountByAccountNumber(@PathVariable String accountNumber){
-        serviceClass.deleteAccountByAccountNumber(accountNumber);
+    public boolean deleteAccountByAccountNumber(@PathVariable String accountNumber){
+        return serviceClass.deleteAccountByAccountNumber(accountNumber);
     }
 
     @GetMapping("/transactions")
@@ -54,13 +54,13 @@ public class ControllerClass {
     }
 
     @PostMapping("/customers/{accountNumber}/withdraw")
-    public void withdrawByAccountNumber(@PathVariable String accountNumber, @RequestParam Double amt){
-        serviceClass.withdrawByAccountNumber(accountNumber,amt);
+    public boolean withdrawByAccountNumber(@PathVariable String accountNumber, @RequestParam Double amt){
+        return serviceClass.withdrawByAccountNumber(accountNumber,amt);
     }
 
     @PostMapping("/customers/{accountNumber}/fundTransfer")
-    public void fundTransferByAccountNumber(@PathVariable String accountNumber, @RequestParam String accNo2, @RequestParam Double amt){
-        serviceClass.fundTransferByAccountNumber(accountNumber,accNo2,amt);
+    public boolean fundTransferByAccountNumber(@PathVariable String accountNumber, @RequestParam String accNo2, @RequestParam Double amt){
+        return serviceClass.fundTransferByAccountNumber(accountNumber,accNo2,amt);
     }
 
 }

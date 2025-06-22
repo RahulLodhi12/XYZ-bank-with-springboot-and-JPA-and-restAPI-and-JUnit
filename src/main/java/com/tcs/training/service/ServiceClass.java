@@ -6,7 +6,6 @@ import com.tcs.training.repository.CustomerRepo;
 import com.tcs.training.repository.TransactionsRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,29 +26,39 @@ public class ServiceClass {
         return customerRepo.findById(accountNumber);
     }
 
-    public void createAccount(String name, String branch, Double balance){
+    public boolean createAccount(String name, String branch, Double balance){
         Customer customer = new Customer("",name,branch,balance);
-        customerRepo.save(customer);
+        if(name.length()==0 || branch.length()==0) {
+            return false;
+        }
+        else {
+            customerRepo.save(customer);
+            return true;
+        }
     }
 
-    public void updateAccountByAccountNumber(String accountNumber, Customer customer){
+    public boolean updateAccountByAccountNumber(String accountNumber, Customer customer){
         Optional<Customer> exist = customerRepo.findById(accountNumber);
         if(exist.isPresent()){
             customer.setAccountNumber(accountNumber); //setting the accountNumber, so we don't need to pass the accountNumber from user or postman.
             customerRepo.save(customer);
+            return true;
         }
         else{
             System.out.println("Not Found..");
+            return false;
         }
     }
 
-    public void deleteAccountByAccountNumber(String accountNumber){
+    public boolean deleteAccountByAccountNumber(String accountNumber){
         Optional<Customer> exist = customerRepo.findById(accountNumber);
         if(exist.isPresent()){
             customerRepo.delete(exist.get());
+            return true;
         }
         else{
             System.out.println("Not Found..");
+            return false;
         }
     }
 
@@ -57,7 +66,7 @@ public class ServiceClass {
         return transactionsRepo.findAll();
     }
 
-    public void depositByAccountNumber(String accountNumber, Double amt){
+    public boolean depositByAccountNumber(String accountNumber, Double amt){
         Optional<Customer> exist = customerRepo.findById(accountNumber);
         if(exist.isPresent()){
             //operations on Customer Table
@@ -69,19 +78,21 @@ public class ServiceClass {
             transactionsRepo.save(transaction);
 
             customerRepo.save(exist.get());
+            return true;
         }
         else{
             System.out.println("Not Found..");
+            return false;
         }
     }
 
-    public void withdrawByAccountNumber(String accountNumber, Double amt){
+    public boolean withdrawByAccountNumber(String accountNumber, Double amt){
         Optional<Customer> exist = customerRepo.findById(accountNumber);
         if(exist.isPresent()){
             Double currentBalance = exist.get().getBalance();
             if(currentBalance-amt<1000){
                 System.out.println("Minimum Balance should be 1000 after withdraw..");
-                return;
+                return false;
             }
             //Operations on Customer Table
             exist.get().setBalance(currentBalance-amt);
@@ -92,13 +103,15 @@ public class ServiceClass {
 
             //Update/Save Customer Details
             customerRepo.save(exist.get());
+            return true;
         }
         else{
             System.out.println("Not Found..");
+            return false;
         }
     }
 
-    public void fundTransferByAccountNumber(String accountNumber, String accNo2, Double amt){
+    public boolean fundTransferByAccountNumber(String accountNumber, String accNo2, Double amt){
         Optional<Customer> customer1 = customerRepo.findById(accountNumber);
         Optional<Customer> customer2 = customerRepo.findById(accNo2);
         if(customer1.isPresent() && customer2.isPresent()){
@@ -106,7 +119,7 @@ public class ServiceClass {
             Double currentBalance1 = customer1.get().getBalance();
             if(currentBalance1-amt<1000){
                 System.out.println("Minimum Balance should be 1000 after withdraw..");
-                return;
+                return false;
             }
             customer1.get().setBalance(currentBalance1-amt);
 
@@ -121,9 +134,11 @@ public class ServiceClass {
             //Update Both Customer Details
             customerRepo.save(customer1.get());
             customerRepo.save(customer2.get());
+            return true;
         }
         else{
             System.out.println("Not Found..");
+            return false;
         }
     }
 }
